@@ -3,7 +3,7 @@ const http = require("http");
 const os = require("os-utils");
 const cors = require('cors')
 const socketIo = require("socket.io");
-const { updateUpuUsage } = require("./utils/cpu");
+const {updateCpuUsage} = require("./utils/cpu");
 
 const app = express();
 
@@ -22,7 +22,9 @@ const server = http.createServer(app);
 
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173/",
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+    credentials: true,
   },
 });
 
@@ -38,7 +40,7 @@ const interval = 1000;
 
     setInterval(() => {
       os.cpuUsage((usage) => {
-        updateUpuUsage(
+        updateCpuUsage(
           Math.round(usage * 100),
           cpuUsageHistory,
           cpuUsageMaxLength
@@ -50,6 +52,6 @@ const interval = 1000;
   });
 })();
 
-app.listen(4003, () => {
+server.listen(4003, () => {
   console.log("Server running on port 4003");
 });
