@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const os = require("os-utils");
 const socketIo = require("socket.io");
+const { updateUpuUsage } = require("./utils/cpu");
 
 const app = express();
 
@@ -24,11 +25,19 @@ const interval = 1000;
     }
 
     setInterval(() => {
-      os.cpuUsage((usage) => {});
+      os.cpuUsage((usage) => {
+        updateUpuUsage(
+          Math.round(usage * 100),
+          cpuUsageHistory,
+          cpuUsageMaxLength
+        );
+      });
+
+      socket.emit("cpu", cpuUsageHistory);
     }, interval);
   });
 })();
 
-app.listen(4001, () => {
-  console.log("Server running on port 4001");
+app.listen(4003, () => {
+  console.log("Server running on port 4003");
 });
