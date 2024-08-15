@@ -13,11 +13,20 @@ const io = socketIo(server, {
   },
 });
 
+const cpuUsageHistory = [];
+const cpuUsageMaxLength = 10;
+const interval = 1000;
 
 (function () {
+  io.on("connection", (socket) => {
+    for (let i = 0; i < cpuUsageMaxLength; i++) {
+      cpuUsageHistory[i] = [i, 0];
+    }
 
-
-
+    setInterval(() => {
+      os.cpuUsage((usage) => {});
+    }, interval);
+  });
 })();
 
 app.listen(4001, () => {
